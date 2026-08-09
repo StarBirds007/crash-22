@@ -1,5 +1,6 @@
 // Hey this is Hei! This shader "fakes" a 3D-camera perspective on CanvasItems.
 // Modified to support Sprite Sheets (Texture Atlases) for AnimatedSprite2D.
+// Extended to support palette swapping based on source and replacement textures.
 // License: MIT
 shader_type canvas_item;
 
@@ -19,6 +20,11 @@ uniform float z_rot : hint_range(-180, 180) = 0.0;
 // At 1, the image is resized so that it can do a full
 // rotation without clipping inside its rect.
 uniform float inset : hint_range(0, 1) = 0.0;
+
+// --- PALETTE SWAP UNIFORMS ---
+uniform sampler2D original_palette : filter_nearest;
+uniform sampler2D target_palette : filter_nearest;
+uniform float precision : hint_range(0.001, 0.1) = 0.01;
 
 varying flat vec2 o;
 varying vec3 p;
@@ -82,5 +88,25 @@ void fragment(){
 	// Convert the 3D-adjusted local UV back into the global atlas UV space
 	vec2 final_uv = frame_uv_offset + (uv + 0.5) * frame_uv_size;
 
-    COLOR = texture(TEXTURE, final_uv);
+	vec4 tex_color = texture(TEXTURE, final_uv);
+
+	// --- PALETTE SWAP LOGIC ---
+	ivec2 pal_size = textureSize(original_palette, 0);
+	vec4 final_color = tex_color;
+
+	for (int y = 0; y < pal_size.y; y++) {
+		for (int x = 0; x < pal_size.x; x++) {
+			vec2 pal_uv = (vec2(float(x), float(y)) + 0.5) / vec2(pal_size);
+			vec4 orig_color = texture(original_palette, pal_uv);
+
+			if (distance(tex_color.rgb, orig_color.rgb) < precision) {
+				vec4 target_color = texture(target_palette, pal_uv);
+				final_color = vec4(target_color.rgb, tex_color.a * target_color.a);
+				x = pal_size.x;
+				y = pal_size.y;
+			}
+		}
+	}
+
+	COLOR = final_color;
 }

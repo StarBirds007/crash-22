@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://gg8wbcyf2i46"]
+
+[ext_resource type="Script" uid="uid://djmvsqdc0n86g" path="res://Scripts/targeting_component.gd" id="1_8acvt"]
+
+[node name="TargetingComponent" type="Node2D"]
+script = ExtResource("1_8acvt")
+circle_radius = 150.0

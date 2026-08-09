@@ -1,13 +1,18 @@
 extends CharacterBody2D
 
+@onready var bullet_manager: MultiMeshInstance2D = $BulletManager
+@onready var health_component: HealthComponent = $HealthComponent
+
 @onready var shader: ShaderMaterial = $AnimatedSprite2D.material as ShaderMaterial
 @onready var animated_sprite_2d: AnimatedSprite2D = $AnimatedSprite2D
 @onready var muzzle: Marker2D = $Muzzle
 @onready var muzzle_2: Marker2D = $Muzzle2
 @onready var rate_of_fire_timer: Timer = $RateOfFire
+@onready var wave_line: Line2D = $WaveLine
+@onready var wave_shader: ShaderMaterial = $WaveLine.material as ShaderMaterial
 
 @export var cruise_speed: float = 200.0 # px/sec
-@export var min_speed: float = 40.0 # px/sec
+@export var min_speed: float = 75.0 # px/sec
 @export var max_speed: float = 400.0 # px/sec
 @export var acceleration: float = 240.0 # px/sec^2
 @export var brake_deceleration: float = 250.0 # px/sec^2
@@ -24,22 +29,26 @@ extends CharacterBody2D
 @export var x_rotation_speed: float = 45 # degrees/sec
 @export var y_rotation_speed: float = 45 # degrees/sec
 
-@export var min_propeller_speed: int = 30 # frames/sec
+@export var min_propeller_speed: int = 45 # frames/sec
 @export var max_propeller_speed: int = 60 # frames/sec
 
 @export var bullet_speed: float = 400 # px/sec
 @export var rate_of_fire: float = 0.1 # sec
+@export var damage: float = 25.0
 var can_shoot: bool = true
+
+@export var max_trail_length: float = 200
+@export var min_trail_length: float = 100
 
 
 var current_speed: float = 0.0
+var target_speed: float = 0.0
 var turn_input: float = 0.0
 var turn_rate: float = 0.0
 enum MovementState { CRUISE, BOOST, BRAKE }
 var movement_state: MovementState = MovementState.CRUISE
+var previous_state: MovementState = movement_state
 var is_decelerating: bool = false
-
-signal shoot_bullet
 
 
 func _ready() -> void:
@@ -48,16 +57,18 @@ func _ready() -> void:
 	rate_of_fire_timer.wait_time = rate_of_fire
 	rate_of_fire_timer.one_shot = true
 	rate_of_fire_timer.timeout.connect(func function():
-		print("Rate of fire timer finished, can shoot again.")
 		can_shoot = true)
 
 	animated_sprite_2d.frame_changed.connect(_on_frame_changed)
+	bullet_manager.enemy_hit.connect(_on_enemy_hit)
+
+	health_component.dead.connect(_on_death)
 
 
 func _shoot_bullet(from_muzzle: Marker2D):
 	can_shoot = false
 	rate_of_fire_timer.start()
-	shoot_bullet.emit(from_muzzle.global_position, Vector2.from_angle(rotation), bullet_speed + current_speed)
+	bullet_manager.spawn_bullet(from_muzzle.global_position, Vector2.from_angle(rotation), bullet_speed + current_speed)
 
 
 func _on_frame_changed() -> void:
@@ -75,22 +86,25 @@ func _physics_process(delta: float) -> void:
 	_handle_turning(delta)
 	_handle_movement()
 	_handle_shader(delta)
+	_handle_water_trail()
 
 
 func _handle_speed(delta: float) -> void:
 	# Determine which target speed and accel/decel rate applies this frame.
-	var target_speed: float
 	var rate: float
 
 	if movement_state == MovementState.BRAKE:
 		target_speed = min_speed
 		rate = brake_deceleration
+		# wave_line.set_shader_speed(target_speed)
 	elif movement_state == MovementState.BOOST:
 		target_speed = boost_speed
 		rate = acceleration
+		# wave_line.set_shader_speed(target_speed)
 	else:
 		target_speed = cruise_speed
 		rate = acceleration
+		# wave_line.set_shader_speed(target_speed)
 
 	# Using a temporary variable to check if speed has decreased from before.
 	var temp_speed = move_toward(current_speed, target_speed, rate * delta)
@@ -164,6 +178,28 @@ func _handle_shader(delta: float) -> void:
 
 	var prop_speed: int = int(lerp(min_propeller_speed, max_propeller_speed, inverse_lerp(min_speed, max_speed, current_speed)))
 	animated_sprite_2d.sprite_frames.set_animation_speed("default", prop_speed)
+
+
+func _handle_water_trail() -> void:
+	if movement_state != previous_state:
+		previous_state = movement_state
+
+		while (current_speed != target_speed):
+			await get_tree().process_frame
+			wave_line.set_shader_speed(target_speed)
+	
+	var trail_length: int = int(lerp(min_trail_length, max_trail_length, inverse_lerp(min_speed, boost_speed, current_speed)))
+	wave_line.target_length = trail_length
+
+
+func _on_enemy_hit(object: Dictionary) -> void:
+	if object.collider.has_method("take_damage"):
+		object.collider.take_damage(damage)
+
+
+func _on_death() -> void:
+	process_mode = Node.PROCESS_MODE_DISABLED
+
 
 func boost(active: bool) -> void:
 	if active:

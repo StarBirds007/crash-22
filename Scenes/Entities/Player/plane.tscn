@@ -1,8 +1,37 @@
-[gd_scene load_steps=18 format=3 uid="uid://5efh2rg36tbu"]
+[gd_scene load_steps=30 format=3 uid="uid://5efh2rg36tbu"]
 
 [ext_resource type="Script" uid="uid://cuflt55xwh14p" path="res://Scripts/plane.gd" id="1_ly0hq"]
-[ext_resource type="Texture2D" uid="uid://kbtapcjni1ow" path="res://Assets/Sprites/Plane.png" id="4_7e1cs"]
+[ext_resource type="PackedScene" uid="uid://bxxsagdyddcfn" path="res://Scenes/Effects & Common Scenes/wave_line.tscn" id="2_um8y7"]
+[ext_resource type="Shader" uid="uid://urufs6nnwh8a" path="res://Assets/Shaders/ripple_shader.gdshader" id="3_b3b3x"]
+[ext_resource type="Texture2D" uid="uid://kbtapcjni1ow" path="res://Assets/Sprites/Player/Plane.png" id="4_7e1cs"]
 [ext_resource type="Material" uid="uid://bx4mbbowpmoyk" path="res://Assets/Shaders/player_shader_material.tres" id="4_b1bhf"]
+[ext_resource type="PackedScene" uid="uid://uukkdcuko0uo" path="res://Scenes/Composition/bullet_manager.tscn" id="5_r05hn"]
+[ext_resource type="PackedScene" uid="uid://fsfege5gyhfg" path="res://Scenes/Composition/attack_component.tscn" id="7_b3b3x"]
+[ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="8_7yaso"]
+[ext_resource type="PackedScene" uid="uid://captkha1e40tl" path="res://Scenes/Composition/hurt_component.tscn" id="9_m4yj6"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1uf5v"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_8tqor"]
+width = 480
+height = 270
+noise = SubResource("FastNoiseLite_1uf5v")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_7yaso"]
+resource_local_to_scene = true
+shader = ExtResource("3_b3b3x")
+shader_parameter/foam_color_base = Color(0.15686275, 0.84705883, 1, 1)
+shader_parameter/foam_color_mid = Color(0.33333334, 0.8784314, 1, 1)
+shader_parameter/foam_color_high = Color(0.5176471, 0.9098039, 1, 1)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_8tqor")
+shader_parameter/noise_scale = Vector2(2, 1)
+shader_parameter/flow_speed = 10.000000475
+shader_parameter/foam_thickness = 0.60000002780148
+shader_parameter/min_start_width = 0.15
+shader_parameter/expansion_rate = 1.5
+shader_parameter/tail_erosion_start = 0.20000000298023
+shader_parameter/pixel_resolution = 128.0
+shader_parameter/pixelate = false
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ebbn"]
 size = Vector2(12, 10)
@@ -99,9 +128,26 @@ animations = [{
 "speed": 30.0
 }]
 
+[sub_resource type="QuadMesh" id="QuadMesh_p4c8d"]
+size = Vector2(1.5, 10)
+
+[sub_resource type="MultiMesh" id="MultiMesh_r05hn"]
+resource_local_to_scene = true
+mesh = SubResource("QuadMesh_p4c8d")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_b3b3x"]
+size = Vector2(26, 24)
+
 [node name="Plane" type="CharacterBody2D"]
 collision_mask = 0
 script = ExtResource("1_ly0hq")
+
+[node name="WaveLine" parent="." node_paths=PackedStringArray("node_to_follow") instance=ExtResource("2_um8y7")]
+material = SubResource("ShaderMaterial_7yaso")
+points = PackedVector2Array(0, 0, -75, 0)
+width = 20.0
+node_to_follow = NodePath("..")
+offset = Vector2(-5, 0)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_6ebbn")
@@ -122,3 +168,18 @@ position = Vector2(3, 5)
 gizmo_extents = 1.0
 
 [node name="RateOfFire" type="Timer" parent="."]
+
+[node name="BulletManager" parent="." instance=ExtResource("5_r05hn")]
+position = Vector2(1, 0)
+multimesh = SubResource("MultiMesh_r05hn")
+
+[node name="AttackComponent" parent="." instance=ExtResource("7_b3b3x")]
+
+[node name="HealthComponent" parent="." instance=ExtResource("8_7yaso")]
+
+[node name="HurtComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("9_m4yj6")]
+collision_mask = 6
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtComponent"]
+shape = SubResource("RectangleShape2D_b3b3x")

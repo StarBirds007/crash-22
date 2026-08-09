@@ -1,0 +1,102 @@
+[gd_scene load_steps=19 format=3 uid="uid://b5iublnyparqj"]
+
+[ext_resource type="Texture2D" uid="uid://cqhpvkfab0o1h" path="res://Assets/Sprites/Enemies/GunBoat.png" id="1_55ndt"]
+[ext_resource type="Material" uid="uid://dcdmfex6f48tx" path="res://Assets/Shaders/enemy_shader_material.tres" id="1_lxsrv"]
+[ext_resource type="Script" uid="uid://bt1agwkmw5yjp" path="res://Scripts/boat_enemy.gd" id="1_ys16e"]
+[ext_resource type="Texture2D" uid="uid://2pkl3x47n4yg" path="res://Assets/Sprites/Enemies/Guns/Gun.png" id="3_co88d"]
+[ext_resource type="PackedScene" uid="uid://fsfege5gyhfg" path="res://Scenes/Composition/attack_component.tscn" id="5_218yj"]
+[ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="6_nj4pn"]
+[ext_resource type="PackedScene" uid="uid://uukkdcuko0uo" path="res://Scenes/Composition/bullet_manager.tscn" id="6_r0chn"]
+[ext_resource type="PackedScene" uid="uid://captkha1e40tl" path="res://Scenes/Composition/hurt_component.tscn" id="7_r0chn"]
+[ext_resource type="PackedScene" uid="uid://bxxsagdyddcfn" path="res://Scenes/Effects & Common Scenes/wave_line.tscn" id="9_r0chn"]
+[ext_resource type="PackedScene" uid="uid://gg8wbcyf2i46" path="res://Scenes/Composition/targeting_component.tscn" id="10_8koeu"]
+[ext_resource type="Shader" uid="uid://urufs6nnwh8a" path="res://Assets/Shaders/ripple_shader.gdshader" id="10_vl83h"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_lxsrv"]
+size = Vector2(15, 6)
+
+[sub_resource type="QuadMesh" id="QuadMesh_p4c8d"]
+size = Vector2(1.5, 10)
+
+[sub_resource type="MultiMesh" id="MultiMesh_8koeu"]
+resource_local_to_scene = true
+mesh = SubResource("QuadMesh_p4c8d")
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nj4pn"]
+size = Vector2(26, 18)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_1uf5v"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_8tqor"]
+width = 480
+height = 270
+noise = SubResource("FastNoiseLite_1uf5v")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cx4va"]
+resource_local_to_scene = true
+shader = ExtResource("10_vl83h")
+shader_parameter/foam_color_base = Color(0.15686275, 0.84705883, 1, 1)
+shader_parameter/foam_color_mid = Color(0.33333334, 0.8784314, 1, 1)
+shader_parameter/foam_color_high = Color(0.5176471, 0.9098039, 1, 1)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_8tqor")
+shader_parameter/noise_scale = Vector2(2, 1)
+shader_parameter/flow_speed = 10.000000475
+shader_parameter/foam_thickness = 0.60000002780148
+shader_parameter/min_start_width = 0.15
+shader_parameter/expansion_rate = 1.5
+shader_parameter/tail_erosion_start = 0.20000000298023
+shader_parameter/pixel_resolution = 128.0
+shader_parameter/pixelate = false
+
+[node name="GunBoat" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("1_ys16e")
+bullets_before_reload = 10
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_lxsrv")
+debug_color = Color(0.99215686, 0, 0.23921569, 0.7019608)
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = ExtResource("1_lxsrv")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("1_55ndt")
+
+[node name="GunSprite" type="Sprite2D" parent="."]
+material = ExtResource("1_lxsrv")
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("3_co88d")
+
+[node name="Muzzle" type="Marker2D" parent="GunSprite"]
+position = Vector2(10, 0)
+
+[node name="AttackComponent" parent="." instance=ExtResource("5_218yj")]
+
+[node name="BulletManager" parent="." instance=ExtResource("6_r0chn")]
+multimesh = SubResource("MultiMesh_8koeu")
+collision_mask = 1
+
+[node name="HealthComponent" parent="." instance=ExtResource("6_nj4pn")]
+
+[node name="HurtComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("7_r0chn")]
+collision_layer = 2
+collision_mask = 0
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtComponent"]
+shape = SubResource("RectangleShape2D_nj4pn")
+
+[node name="WaveLine" parent="." node_paths=PackedStringArray("node_to_follow") instance=ExtResource("9_r0chn")]
+material = SubResource("ShaderMaterial_cx4va")
+points = PackedVector2Array(7, 0, -68, 0)
+width = 15.0
+node_to_follow = NodePath("..")
+offset = Vector2(7, 0)
+
+[node name="TargetingComponent" parent="." instance=ExtResource("10_8koeu")]
+
+[node name="RateOfFire" type="Timer" parent="."]
+
+[node name="ReloadTimer" type="Timer" parent="."]

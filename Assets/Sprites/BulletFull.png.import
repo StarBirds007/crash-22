@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dct3ggg36xlkn"
-path="res://.godot/imported/431-4317480_top-view-outline-drawing-cartoon-airplane-down-cartoon.png-6df08a616137eb13d1e59f4a1c4b0e03.ctex"
+uid="uid://df0jaw42fp7lh"
+path="res://.godot/imported/BulletFull.png-3aa434fd607a8f2d477e83d6fa82a04d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/Sprites/431-4317480_top-view-outline-drawing-cartoon-airplane-down-cartoon.png"
-dest_files=["res://.godot/imported/431-4317480_top-view-outline-drawing-cartoon-airplane-down-cartoon.png-6df08a616137eb13d1e59f4a1c4b0e03.ctex"]
+source_file="res://Assets/Sprites/BulletFull.png"
+dest_files=["res://.godot/imported/BulletFull.png-3aa434fd607a8f2d477e83d6fa82a04d.ctex"]
 
 [params]
 

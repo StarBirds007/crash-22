@@ -8,7 +8,11 @@ class Bullet:
 	var starting_position: Vector2
 	var rotation: float = 0.0
 
+@export_flags_2d_physics var collision_mask: int = 2
+
 var active_bullets: Array[Bullet] = []
+
+signal enemy_hit(hit_object: Dictionary)
 
 func _physics_process(delta: float) -> void:
 	var space_state = get_world_2d().direct_space_state
@@ -25,8 +29,8 @@ func _physics_process(delta: float) -> void:
 		# 2. Setup the Raycast query
 		var query = PhysicsRayQueryParameters2D.create(bullet.prev_position, bullet.position)
 		query.collide_with_areas = true
-		query.collide_with_bodies = true
-		query.collision_mask = 2
+		query.collide_with_bodies = false
+		query.collision_mask = collision_mask
 
 		var result = space_state.intersect_ray(query)
 
@@ -64,9 +68,4 @@ func spawn_bullet(start_pos: Vector2, direction: Vector2, speed: float) -> void:
 	active_bullets.append(new_bullet)
 
 func handle_bullet_hit(result: Dictionary, _bullet: Bullet) -> void:
-	var hit_object = result.collider
-	# Add your damage logic here, for example:
-	if hit_object.has_method("take_damage"):
-		hit_object.take_damage(10)
-	
-	# Spawn a hit particle effect here if desired
+	enemy_hit.emit(result)

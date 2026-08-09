@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3 uid="uid://uukkdcuko0uo"]
+
+[ext_resource type="Texture2D" uid="uid://c5xhtmtd11e8a" path="res://Assets/Sprites/BulletNew.png" id="1_21yjh"]
+[ext_resource type="Script" uid="uid://n77bjoio06u8" path="res://Scripts/bullet_manager.gd" id="2_ofn6a"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_p4c8d"]
+size = Vector2(1.5, 10)
+
+[sub_resource type="MultiMesh" id="MultiMesh_33mim"]
+resource_local_to_scene = true
+mesh = SubResource("QuadMesh_p4c8d")
+
+[node name="BulletManager" type="MultiMeshInstance2D"]
+top_level = true
+multimesh = SubResource("MultiMesh_33mim")
+texture = ExtResource("1_21yjh")
+script = ExtResource("2_ofn6a")
+collision_mask = 6

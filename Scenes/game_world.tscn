@@ -1,40 +1,38 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1pa0a5lwpawn"]
+[gd_scene load_steps=7 format=3 uid="uid://b1pa0a5lwpawn"]
 
-[ext_resource type="PackedScene" uid="uid://5efh2rg36tbu" path="res://Scenes/plane.tscn" id="1_0nejw"]
+[ext_resource type="PackedScene" uid="uid://5efh2rg36tbu" path="res://Scenes/Entities/Player/plane.tscn" id="1_0nejw"]
 [ext_resource type="Script" uid="uid://cpi2hmvd1cjpi" path="res://Scripts/game_world.gd" id="1_alii3"]
 [ext_resource type="Texture2D" uid="uid://eqf0vwfwttye" path="res://Assets/Sprites/Sea.png" id="2_qvgq0"]
-[ext_resource type="Texture2D" uid="uid://co3jsixxqksex" path="res://Assets/Sprites/Bullet.png" id="4_p4c8d"]
-[ext_resource type="Script" uid="uid://n77bjoio06u8" path="res://Scripts/bullet_manager.gd" id="5_f1ejf"]
-
-[sub_resource type="QuadMesh" id="QuadMesh_p4c8d"]
-size = Vector2(1, 2)
-
-[sub_resource type="MultiMesh" id="MultiMesh_p4c8d"]
-mesh = SubResource("QuadMesh_p4c8d")
+[ext_resource type="Script" uid="uid://35jlf2hbbsdu" path="res://Scripts/enemy_spawner.gd" id="5_f1ejf"]
+[ext_resource type="Material" uid="uid://cqy0o5t1cr006" path="res://Assets/Shaders/water_shader.tres" id="5_p4c8d"]
+[ext_resource type="PackedScene" uid="uid://b5iublnyparqj" path="res://Scenes/Entities/Enemies/gun_boat.tscn" id="6_d0bjv"]
 
 [node name="GameWorld" type="Node2D"]
 script = ExtResource("1_alii3")
 
 [node name="Parallax2D" type="Parallax2D" parent="."]
+z_index = -2
 scroll_offset = Vector2(240, 135)
 repeat_size = Vector2(480, 270)
 repeat_times = 5
 
 [node name="Sprite2D" type="Sprite2D" parent="Parallax2D"]
+material = ExtResource("5_p4c8d")
+position = Vector2(480, 270)
 texture = ExtResource("2_qvgq0")
 
 [node name="Plane" parent="." instance=ExtResource("1_0nejw")]
 position = Vector2(240, 135)
 
 [node name="Camera2D" type="Camera2D" parent="Plane"]
-position_smoothing_enabled = true
+physics_interpolation_mode = 1
 position_smoothing_speed = 10.0
 
-[node name="BulletManager" type="MultiMeshInstance2D" parent="."]
-position = Vector2(1, 0)
-multimesh = SubResource("MultiMesh_p4c8d")
-texture = ExtResource("4_p4c8d")
+[node name="EnemySpawner" type="Node" parent="." node_paths=PackedStringArray("spawn_center_node")]
 script = ExtResource("5_f1ejf")
+spawn_center_node = NodePath("../Plane")
+spawnable_objects = Array[PackedScene]([ExtResource("6_d0bjv")])
+spawn_radius = 600.0
 
 [node name="UI" type="CanvasLayer" parent="."]
 
@@ -44,24 +42,32 @@ offset_right = 56.0
 offset_bottom = 23.0
 text = "Speed: "
 
-[node name="InputAxis" type="Label" parent="UI"]
+[node name="Radius" type="Label" parent="UI"]
 unique_name_in_owner = true
-offset_top = 27.0
-offset_right = 40.0
-offset_bottom = 50.0
-text = "INput"
-
-[node name="TurnRate" type="Label" parent="UI"]
-unique_name_in_owner = true
-offset_top = 55.0
-offset_right = 40.0
-offset_bottom = 78.0
-text = "TurnRate"
-
-[node name="Rotation" type="Label" parent="UI"]
-unique_name_in_owner = true
-offset_top = 78.0
+offset_top = 98.0
 offset_right = 104.0
-offset_bottom = 127.0
-text = "Rotation
-"
+offset_bottom = 147.0
+text = "Radius"
+
+[node name="KillCount" type="Label" parent="UI"]
+unique_name_in_owner = true
+offset_top = 120.0
+offset_right = 104.0
+offset_bottom = 169.0
+text = "Kill"
+
+[node name="Ocean" type="CanvasLayer" parent="."]
+layer = -1
+visible = false
+
+[node name="TextureRect" type="TextureRect" parent="Ocean"]
+material = ExtResource("5_p4c8d")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 652.0
+offset_bottom = 185.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_qvgq0")
+stretch_mode = 1
