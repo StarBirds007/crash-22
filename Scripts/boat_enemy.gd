@@ -28,6 +28,8 @@ var bullets_shot: int = 0
 signal died
 
 func _ready() -> void:
+	z_index = RenderLayers.BOATS
+
 	rate_of_fire_timer.timeout.connect(_rate_of_fire_timeout)
 	reload_timer.timeout.connect(_reload_timeout)
 	rate_of_fire_timer.wait_time = rate_of_fire
@@ -45,13 +47,18 @@ func _physics_process(delta: float) -> void:
 	var dist_vector = target_vector - global_position
 	var desired_rotation = dist_vector.angle()
 
+	var exact_target_vector: Vector2 = targeting_component.get_exact_target()
+	dist_vector = exact_target_vector - gun_sprite.global_position
+	var desired_gun_rotation = dist_vector.angle()
+
 	rotation = rotate_toward(rotation, desired_rotation, delta)
 
 	velocity = Vector2.from_angle(rotation) * speed
 
 	move_and_slide()
 
-	gun_sprite.look_at(targeting_component.get_exact_target())
+	gun_sprite.global_rotation = rotate_toward(gun_sprite.global_rotation, desired_gun_rotation, delta * 1.5)
+	# gun_sprite.look_at(targeting_component.get_exact_target())
 
 
 func _process(_delta: float) -> void:

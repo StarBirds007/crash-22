@@ -1,10 +1,10 @@
-[gd_scene load_steps=30 format=3 uid="uid://5efh2rg36tbu"]
+[gd_scene load_steps=31 format=3 uid="uid://5efh2rg36tbu"]
 
 [ext_resource type="Script" uid="uid://cuflt55xwh14p" path="res://Scripts/plane.gd" id="1_ly0hq"]
 [ext_resource type="PackedScene" uid="uid://bxxsagdyddcfn" path="res://Scenes/Effects & Common Scenes/wave_line.tscn" id="2_um8y7"]
 [ext_resource type="Shader" uid="uid://urufs6nnwh8a" path="res://Assets/Shaders/ripple_shader.gdshader" id="3_b3b3x"]
 [ext_resource type="Texture2D" uid="uid://kbtapcjni1ow" path="res://Assets/Sprites/Player/Plane.png" id="4_7e1cs"]
-[ext_resource type="Material" uid="uid://bx4mbbowpmoyk" path="res://Assets/Shaders/player_shader_material.tres" id="4_b1bhf"]
+[ext_resource type="Shader" uid="uid://dpuw4m11l5v5s" path="res://Assets/Shaders/entity_shader.gdshader" id="4_7yaso"]
 [ext_resource type="PackedScene" uid="uid://uukkdcuko0uo" path="res://Scenes/Composition/bullet_manager.tscn" id="5_r05hn"]
 [ext_resource type="PackedScene" uid="uid://fsfege5gyhfg" path="res://Scenes/Composition/attack_component.tscn" id="7_b3b3x"]
 [ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="8_7yaso"]
@@ -35,6 +35,21 @@ shader_parameter/pixelate = false
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ebbn"]
 size = Vector2(12, 10)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_oi6fs"]
+resource_local_to_scene = true
+shader = ExtResource("4_7yaso")
+shader_parameter/columns = 3
+shader_parameter/rows = 4
+shader_parameter/frame = 0
+shader_parameter/fov = 45.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 0.0
+shader_parameter/z_rot = 0.0
+shader_parameter/inset = 0.0
+shader_parameter/precision = 0.01
+shader_parameter/overlay_color = Color(1, 0, 0, 0)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_b1bhf"]
 atlas = ExtResource("4_7e1cs")
@@ -153,7 +168,7 @@ offset = Vector2(-5, 0)
 shape = SubResource("RectangleShape2D_6ebbn")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-material = ExtResource("4_b1bhf")
+material = SubResource("ShaderMaterial_oi6fs")
 rotation = 1.5707964
 scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_5g3pq")
@@ -176,9 +191,11 @@ multimesh = SubResource("MultiMesh_r05hn")
 [node name="AttackComponent" parent="." instance=ExtResource("7_b3b3x")]
 
 [node name="HealthComponent" parent="." instance=ExtResource("8_7yaso")]
+MAX_HEALTH = 99999.0
 
-[node name="HurtComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("9_m4yj6")]
+[node name="HurtComponent" parent="." node_paths=PackedStringArray("visual_component", "health_component") instance=ExtResource("9_m4yj6")]
 collision_mask = 6
+visual_component = NodePath("../AnimatedSprite2D")
 health_component = NodePath("../HealthComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="HurtComponent"]

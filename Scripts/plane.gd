@@ -52,6 +52,8 @@ var is_decelerating: bool = false
 
 
 func _ready() -> void:
+	z_index = RenderLayers.PLAYER
+
 	current_speed = min_speed
 
 	rate_of_fire_timer.wait_time = rate_of_fire

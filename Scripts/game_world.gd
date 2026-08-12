@@ -5,6 +5,7 @@ extends Node2D
 @onready var plane: Node = $Plane
 @onready var camera_2d: Camera2D = $Plane/Camera2D
 @onready var enemy_spawn_timer: Timer
+@onready var ocean_parallax: Parallax2D = $OceanParallax
 
 @onready var speed: Label = %Speed
 @onready var radius: Label = %Radius
@@ -18,6 +19,8 @@ extends Node2D
 
 
 func _ready() -> void:
+	ocean_parallax.z_index = RenderLayers.WATER
+
 	enemy_spawn_timer = Timer.new()
 	enemy_spawn_timer.wait_time = enemy_spawn_rate
 	enemy_spawn_timer.one_shot = false
@@ -50,7 +53,7 @@ func _handle_camera() -> void:
 
 
 func _spawn_enemies() -> void:
-	print("HEHEHEHE")
+	# print("HEHEHEHE")
 	print("Enemy Spawned: " + str(enemy_spawner.spawn_random_enemy()))
 
 

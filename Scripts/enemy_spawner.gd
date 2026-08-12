@@ -2,7 +2,7 @@ extends Node
 
 @export var spawn_center_node: Node2D
 @export var spawnable_objects: Array[PackedScene] = []
-@export var spawn_radius: float = 400.0
+@export var spawn_radius: float = 600.0
 
 var dead_enemies: int = 0
 
@@ -24,8 +24,7 @@ func spawn_random_enemy() -> Node:
 	# 2. Calculate a random position inside/on the imaginary circle
 	# Using polar coordinates for a uniform distribution within a circle
 	var angle: float = randf() * PI * 2
-	var distance: float = sqrt(randf()) * spawn_radius
-	var offset: Vector2 = Vector2(cos(angle), sin(angle)) * distance
+	var offset: Vector2 = Vector2.from_angle(angle).normalized() * spawn_radius
 	
 	var spawn_position: Vector2 = spawn_center_node.global_position + offset
 
