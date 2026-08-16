@@ -8,8 +8,8 @@ extends CharacterBody2D
 @onready var muzzle: Marker2D = $Muzzle
 @onready var muzzle_2: Marker2D = $Muzzle2
 @onready var rate_of_fire_timer: Timer = $RateOfFire
-@onready var wave_line: Line2D = $WaveLine
-@onready var wave_shader: ShaderMaterial = $WaveLine.material as ShaderMaterial
+@onready var wave_line: Line2D = $PlaneTrail
+@onready var wave_shader: ShaderMaterial = $PlaneTrail.material as ShaderMaterial
 
 @export var cruise_speed: float = 200.0 # px/sec
 @export var min_speed: float = 75.0 # px/sec
@@ -38,7 +38,7 @@ extends CharacterBody2D
 var can_shoot: bool = true
 
 @export var max_trail_length: float = 200
-@export var min_trail_length: float = 100
+@export var min_trail_length: float = 150
 
 
 var current_speed: float = 0.0
@@ -46,8 +46,9 @@ var target_speed: float = 0.0
 var turn_input: float = 0.0
 var turn_rate: float = 0.0
 enum MovementState { CRUISE, BOOST, BRAKE }
-var movement_state: MovementState = MovementState.CRUISE
-var previous_state: MovementState = movement_state
+var movement_state: MovementState = MovementState.BRAKE
+var previous_state: MovementState
+var state_changed: bool = false
 var is_decelerating: bool = false
 
 
@@ -65,6 +66,7 @@ func _ready() -> void:
 	bullet_manager.enemy_hit.connect(_on_enemy_hit)
 
 	health_component.dead.connect(_on_death)
+	# wave_line.set_shader_speed(target_speed)
 
 
 func _shoot_bullet(from_muzzle: Marker2D):
@@ -78,6 +80,12 @@ func _on_frame_changed() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if movement_state != previous_state:
+		previous_state = movement_state
+		state_changed = true
+	else:
+		state_changed = false
+
 	if Input.is_action_pressed("shoot") and can_shoot:
 		_shoot_bullet(muzzle)
 		_shoot_bullet(muzzle_2)
@@ -183,15 +191,12 @@ func _handle_shader(delta: float) -> void:
 
 
 func _handle_water_trail() -> void:
-	if movement_state != previous_state:
-		previous_state = movement_state
-
-		while (current_speed != target_speed):
-			await get_tree().process_frame
-			wave_line.set_shader_speed(target_speed)
+	if current_speed != target_speed:
+		print("Current Speed: ", current_speed, "\nTarget Speed: ", target_speed, "\n")
+		wave_line.set_shader_speed(current_speed)
 	
-	var trail_length: int = int(lerp(min_trail_length, max_trail_length, inverse_lerp(min_speed, boost_speed, current_speed)))
-	wave_line.target_length = trail_length
+	var trail_length: float = lerp(min_trail_length, max_trail_length, inverse_lerp(min_speed, boost_speed, current_speed))
+	wave_line.target_length = trail_length#move_toward(wave_line.target_length, trail_length, delta)
 
 
 func _on_enemy_hit(object: Dictionary) -> void:

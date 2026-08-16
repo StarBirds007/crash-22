@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://diknxdj5ctuy2"]
+
+[ext_resource type="Material" uid="uid://nux7ym07ffan" path="res://Assets/Shaders/plane_trail_material.tres" id="1_bg75u"]
+[ext_resource type="Script" uid="uid://ceqxdmueteew0" path="res://Scripts/wave_line.gd" id="2_t1yjv"]
+
+[node name="PlaneTrail" type="Line2D"]
+top_level = true
+z_index = -1
+material = ExtResource("1_bg75u")
+points = PackedVector2Array(0, 0, -100, 0)
+width = 30.0
+texture_mode = 2
+script = ExtResource("2_t1yjv")

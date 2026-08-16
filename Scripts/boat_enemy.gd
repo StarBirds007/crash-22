@@ -9,12 +9,12 @@ extends CharacterBody2D
 @onready var reload_timer: Timer = $ReloadTimer
 @onready var bullet_manager: MultiMeshInstance2D = $BulletManager
 
-var target: CharacterBody2D
+@export var resource: EntityResource
 
 @export var speed: float = 100.0 # px/sec
 @export var turn_rate: float = 2.0 # rad/sec
 
-@export var bullets_before_reload: int = 25
+@export var bullets_before_reload: int = 10
 @export var bullet_speed: float = 500.0
 @export var reload_time: float = 3.0
 @export var rate_of_fire: float = 0.1
@@ -24,8 +24,6 @@ var target: CharacterBody2D
 var can_shoot: bool = true
 var is_reloading: bool = false
 var bullets_shot: int = 0
-
-signal died
 
 func _ready() -> void:
 	z_index = RenderLayers.BOATS
@@ -37,7 +35,7 @@ func _ready() -> void:
 
 	health_component.dead.connect(_on_death)
 	health_component.critical_health.connect(_on_critical_health)
-	targeting_component.set_target(target)
+	targeting_component.set_target(resource.target)
 
 	bullet_manager.enemy_hit.connect(_on_enemy_hit)
 
@@ -87,7 +85,7 @@ func _rate_of_fire_timeout() -> void:
 
 
 func _on_death() -> void:
-	died.emit()
+	resource.died.emit()
 	queue_free()
 
 

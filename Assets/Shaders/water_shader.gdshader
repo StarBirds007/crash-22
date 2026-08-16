@@ -7,11 +7,9 @@ uniform vec4 color0 : source_color;
 uniform vec4 color1 : source_color;
 uniform vec4 color2 : source_color;
 uniform vec4 color3 : source_color;
-uniform vec4 color4 : source_color;
-uniform vec4 color5 : source_color;
 
-uniform vec2 Direction1 = vec2(1, 0); 
-uniform vec2 Direction2 = vec2(1, 1); 
+uniform vec2 Direction1 = vec2(1, 0);
+uniform vec2 Direction2 = vec2(1, 1);
 uniform float Speed1 = 0.08;
 uniform float Speed2 = 0.08;
 uniform sampler2D noise : repeat_enable, filter_nearest;
@@ -39,12 +37,11 @@ bool is_in_threshold(vec4 old_color, float threshold_low, float threshold_hi){
 }
 
 vec4 smooth_extreme_colors(vec4 color) {
-	// Lower numbers are darker
+	// Adjusted thresholds for 4 colors (range 0.0 to 3.0)
 	float threshold_1 = 1.7;
-	float threshold_2 = 1.9;
-	float threshold_3 = 2.2;
-	float threshold_4 = 2.25;
-	float threshold_5 = 2.3;
+	float threshold_2 = 2.0;
+	float threshold_3 = 2.3;
+
 	// Dark to light
 	if (is_in_threshold(color, 0.0, threshold_1)) {
 		color = color0;
@@ -52,14 +49,10 @@ vec4 smooth_extreme_colors(vec4 color) {
 		color = color1;
 	} else if (is_in_threshold(color, threshold_2, threshold_3)) {
 		color = color2;
-	} else if (is_in_threshold(color, threshold_3, threshold_4)) {
+	} else if (is_in_threshold(color, threshold_3, 3.0)) {
 		color = color3;
-	} else if (is_in_threshold(color, threshold_4, threshold_5)) {
-		color = color4;
-	} else if (is_in_threshold(color, threshold_5, 3.0)) {
-		color = color5;
 	}
-	
+
 	return color;
 }
 
@@ -67,6 +60,6 @@ void fragment(){
 	vec4 pixelated_color = 0.5 * get_pixelated_moving_colors(UV, Direction1, Speed1);
 	pixelated_color += 0.5 * get_pixelated_moving_colors(UV, Direction2, Speed2);
 	vec4 smoothed_color = smooth_extreme_colors(pixelated_color);
-	
+
 	COLOR = smoothed_color * transparency;
 }

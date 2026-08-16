@@ -1,0 +1,155 @@
+[gd_scene load_steps=25 format=3 uid="uid://dlw2ou0idt1ip"]
+
+[ext_resource type="Script" uid="uid://dbkl753e7jrog" path="res://Scripts/trail_plane.gd" id="1_rc4l8"]
+[ext_resource type="Shader" uid="uid://dpuw4m11l5v5s" path="res://Assets/Shaders/entity_shader.gdshader" id="2_0xbig"]
+[ext_resource type="Texture2D" uid="uid://duc0jvdjxy8de" path="res://Assets/Sprites/Enemies/TrailPlane.png" id="2_7h7r4"]
+[ext_resource type="Script" uid="uid://dxllopgjijarg" path="res://Scripts/entity_resource.gd" id="2_svd65"]
+[ext_resource type="PackedScene" uid="uid://gg8wbcyf2i46" path="res://Scenes/Composition/targeting_component.tscn" id="3_7h7r4"]
+[ext_resource type="PackedScene" uid="uid://diknxdj5ctuy2" path="res://Scenes/Effects & Common Scenes/plane_trail.tscn" id="4_e5csn"]
+[ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="5_qii5f"]
+[ext_resource type="PackedScene" uid="uid://captkha1e40tl" path="res://Scenes/Composition/hurt_component.tscn" id="6_0xbig"]
+
+[sub_resource type="Resource" id="Resource_gj317"]
+resource_local_to_scene = true
+script = ExtResource("2_svd65")
+no_of_instances = 1
+metadata/_custom_type_script = "uid://dxllopgjijarg"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_svd65"]
+resource_local_to_scene = true
+shader = ExtResource("2_0xbig")
+shader_parameter/columns = 3
+shader_parameter/rows = 4
+shader_parameter/frame = 0
+shader_parameter/fov = 45.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 0.0
+shader_parameter/z_rot = 0.0
+shader_parameter/inset = 0.0
+shader_parameter/precision = 0.01
+shader_parameter/overlay_color = Color(1, 0, 0, 0)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rc4l8"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7h7r4"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e5csn"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gpodl"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qii5f"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0xbig"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_svd65"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(0, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gj317"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(32, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wj6ut"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(64, 64, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nehhb"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(0, 96, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_e6bv0"]
+atlas = ExtResource("2_7h7r4")
+region = Rect2(32, 96, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_rc4l8"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rc4l8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7h7r4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e5csn")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gpodl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qii5f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0xbig")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_svd65")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gj317")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wj6ut")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nehhb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_e6bv0")
+}],
+"loop": true,
+"name": &"default",
+"speed": 45.0
+}]
+
+[sub_resource type="Curve2D" id="Curve2D_7h7r4"]
+resource_local_to_scene = true
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_svd65"]
+size = Vector2(8, 8)
+
+[node name="TrailPlane" type="CharacterBody2D"]
+script = ExtResource("1_rc4l8")
+resource = SubResource("Resource_gj317")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+material = SubResource("ShaderMaterial_svd65")
+scale = Vector2(0.35, 0.35)
+sprite_frames = SubResource("SpriteFrames_rc4l8")
+autoplay = "default"
+
+[node name="PlanePath" type="Path2D" parent="."]
+top_level = true
+curve = SubResource("Curve2D_7h7r4")
+
+[node name="TargetingComponent" parent="." instance=ExtResource("3_7h7r4")]
+circle_radius = 0.0
+
+[node name="PlaneTrail" parent="." node_paths=PackedStringArray("node_to_follow") instance=ExtResource("4_e5csn")]
+node_to_follow = NodePath("..")
+
+[node name="HealthComponent" parent="." instance=ExtResource("5_qii5f")]
+MAX_HEALTH = 50.0
+
+[node name="HurtComponent" parent="." node_paths=PackedStringArray("visual_component", "health_component") instance=ExtResource("6_0xbig")]
+collision_layer = 4
+visual_component = NodePath("../AnimatedSprite2D")
+health_component = NodePath("../HealthComponent")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtComponent"]
+shape = SubResource("RectangleShape2D_svd65")
+
+[connection signal="area_entered" from="HurtComponent" to="." method="_on_hurt_component_area_entered"]

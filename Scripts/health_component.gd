@@ -14,9 +14,9 @@ func _ready() -> void:
 
 func take_damage(dmg: float):
     health -= dmg
-    # print("took damage", dmg)
+    print("took damage", dmg)
     if health <= 0:
-        # print("DED")
+        print("DED")
         dead.emit()
     
     if health <= MAX_HEALTH * critical_percentage:

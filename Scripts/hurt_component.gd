@@ -13,8 +13,9 @@ func _ready() -> void:
     if visual_component and visual_component.material != null:
         var temp_mat: ShaderMaterial = visual_component.material as ShaderMaterial
         if temp_mat.get_shader_parameter("overlay_color"):
-            print("true")
             mat = temp_mat
+        else:
+            push_error("Shader not selected for object: ", get_parent())
 
 
 func take_damage(dmg: float):
@@ -36,4 +37,8 @@ func _flash_effect():
 
     tween = create_tween()
     tween.tween_property(mat, "shader_parameter/overlay_color", target_color, flash_time)
-    
+
+
+func _process(_delta: float) -> void:
+    if Input.is_key_pressed(KEY_D):
+        take_damage(1)

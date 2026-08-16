@@ -1,0 +1,26 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://nux7ym07ffan"]
+
+[ext_resource type="Shader" uid="uid://rjmca8p5pxfc" path="res://Assets/Shaders/plane_trail_shader.gdshader" id="1_r4aty"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_r4aty"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_iarr6"]
+width = 480
+height = 270
+noise = SubResource("FastNoiseLite_r4aty")
+seamless = true
+
+[resource]
+shader = ExtResource("1_r4aty")
+shader_parameter/foam_color_base = Color(0.15686275, 0.84705883, 1, 1)
+shader_parameter/foam_color_mid = Color(0.33333334, 0.8784314, 1, 1)
+shader_parameter/foam_color_high = Color(0.5176471, 0.9098039, 1, 1)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_iarr6")
+shader_parameter/noise_scale = Vector2(3, 1)
+shader_parameter/flow_speed = 3.0
+shader_parameter/foam_thickness = 0.25
+shader_parameter/min_start_width = 0.15
+shader_parameter/expansion_rate = 1.5
+shader_parameter/tail_erosion_start = 0.20000000298023
+shader_parameter/pixel_resolution = 64.0
+shader_parameter/pixelate = false

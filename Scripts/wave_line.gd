@@ -2,7 +2,7 @@ extends Line2D
 
 @export var node_to_follow: Node2D
 
-@export var target_length: int = 100
+@export var target_length: float = 100.0
 @export var offset: Vector2 = Vector2.ZERO
 
 var shader: ShaderMaterial = material as ShaderMaterial
