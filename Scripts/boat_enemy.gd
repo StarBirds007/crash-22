@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+@onready var death_component: DeathComponent = $DeathComponent
 @onready var health_component: HealthComponent = $HealthComponent
 @onready var targeting_component: TargetingComponent = $TargetingComponent
 
@@ -13,6 +14,7 @@ extends CharacterBody2D
 
 @export var speed: float = 100.0 # px/sec
 @export var turn_rate: float = 2.0 # rad/sec
+@export var gun_turn_rate: float = 1 # rad/sec
 
 @export var bullets_before_reload: int = 10
 @export var bullet_speed: float = 500.0
@@ -55,7 +57,8 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	gun_sprite.global_rotation = rotate_toward(gun_sprite.global_rotation, desired_gun_rotation, delta * 1.5)
+	gun_sprite.global_rotation = rotate_toward(gun_sprite.global_rotation, desired_gun_rotation, delta * gun_turn_rate)
+	gun_sprite.rotation = clampf(gun_sprite.rotation, -PI/2, PI/2)
 	# gun_sprite.look_at(targeting_component.get_exact_target())
 
 
@@ -86,7 +89,7 @@ func _rate_of_fire_timeout() -> void:
 
 func _on_death() -> void:
 	resource.died.emit()
-	queue_free()
+	death_component.die()
 
 
 func _on_critical_health() -> void:

@@ -1,6 +1,7 @@
 extends Area2D
 class_name BodyCollisionComponent
 
+@export var health_component: HealthComponent
 @export var damage: float = 100.0
 @export var full_damage: bool = true
 
@@ -14,3 +15,5 @@ func _on_area_entered(area: Area2D) -> void:
 	else:
 		if area.has_method("take_damage"):
 			area.take_damage(damage)
+	
+	health_component.take_damage(10)

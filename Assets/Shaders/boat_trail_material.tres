@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://dpt3fdwbrfvqn"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://dpt3fdwbrfvqn"]
 
 [ext_resource type="Shader" uid="uid://urufs6nnwh8a" path="res://Assets/Shaders/boat_trail_shader.gdshader" id="1_6xtmw"]
 

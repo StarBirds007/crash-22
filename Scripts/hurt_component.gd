@@ -8,6 +8,7 @@ class_name HurtComponent
 
 var tween: Tween
 var mat: ShaderMaterial
+var default_color: Color
 
 func _ready() -> void:
     if visual_component and visual_component.material != null:
@@ -24,14 +25,18 @@ func take_damage(dmg: float):
     
     if mat:
         _flash_effect()
-        print("Flashing Red")
 
 
 func _flash_effect():
     if tween and tween.is_valid():
         tween.kill()
     
-    var target_color: Color = Color(flash_color.r, flash_color.g, flash_color.b, 0)
+    var target_color: Color
+
+    if default_color:
+        target_color = default_color
+    else:
+        target_color = Color(flash_color.r, flash_color.g, flash_color.b, 0)
 
     mat.set_shader_parameter("overlay_color", flash_color)
 

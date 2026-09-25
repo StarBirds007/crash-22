@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dlw2ou0idt1ip"]
+[gd_scene load_steps=27 format=3 uid="uid://dlw2ou0idt1ip"]
 
 [ext_resource type="Script" uid="uid://dbkl753e7jrog" path="res://Scripts/trail_plane.gd" id="1_rc4l8"]
 [ext_resource type="Shader" uid="uid://dpuw4m11l5v5s" path="res://Assets/Shaders/entity_shader.gdshader" id="2_0xbig"]
@@ -8,11 +8,14 @@
 [ext_resource type="PackedScene" uid="uid://diknxdj5ctuy2" path="res://Scenes/Effects & Common Scenes/plane_trail.tscn" id="4_e5csn"]
 [ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="5_qii5f"]
 [ext_resource type="PackedScene" uid="uid://captkha1e40tl" path="res://Scenes/Composition/hurt_component.tscn" id="6_0xbig"]
+[ext_resource type="PackedScene" uid="uid://domlxh5ejvyw5" path="res://Scenes/Composition/death_component.tscn" id="8_gj317"]
+[ext_resource type="PackedScene" uid="uid://c1khhbxfiouub" path="res://Scenes/Effects & Common Scenes/air_explosion.tscn" id="9_wj6ut"]
 
 [sub_resource type="Resource" id="Resource_gj317"]
 resource_local_to_scene = true
 script = ExtResource("2_svd65")
-no_of_instances = 1
+no_of_instances = 2
+pwup_drop_chance = 0.05
 metadata/_custom_type_script = "uid://dxllopgjijarg"
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_svd65"]
@@ -119,7 +122,7 @@ animations = [{
 resource_local_to_scene = true
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_svd65"]
-size = Vector2(8, 8)
+size = Vector2(10, 12)
 
 [node name="TrailPlane" type="CharacterBody2D"]
 script = ExtResource("1_rc4l8")
@@ -127,7 +130,7 @@ resource = SubResource("Resource_gj317")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_svd65")
-scale = Vector2(0.35, 0.35)
+scale = Vector2(0.5, 0.5)
 sprite_frames = SubResource("SpriteFrames_rc4l8")
 autoplay = "default"
 
@@ -142,7 +145,15 @@ circle_radius = 0.0
 node_to_follow = NodePath("..")
 
 [node name="HealthComponent" parent="." instance=ExtResource("5_qii5f")]
-MAX_HEALTH = 50.0
+MAX_HEALTH = 25.0
+
+[node name="DeathComponent" parent="." node_paths=PackedStringArray("hurt_component", "visual_components") instance=ExtResource("8_gj317")]
+hurt_component = NodePath("../HurtComponent")
+visual_components = [NodePath("../AnimatedSprite2D"), NodePath("../PlaneTrail")]
+effect = ExtResource("9_wj6ut")
+effect_scale_override = 0.75
+movement_mode = "Altitude Loss"
+override_velocity = 100.0
 
 [node name="HurtComponent" parent="." node_paths=PackedStringArray("visual_component", "health_component") instance=ExtResource("6_0xbig")]
 collision_layer = 4

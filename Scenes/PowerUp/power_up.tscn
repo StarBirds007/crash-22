@@ -1,0 +1,47 @@
+[gd_scene load_steps=8 format=3 uid="uid://csc3jfx0sdalo"]
+
+[ext_resource type="Script" uid="uid://bc2icljagebo4" path="res://Scripts/PowerUps/power_up_pickup.gd" id="1_5mfs4"]
+[ext_resource type="Texture2D" uid="uid://cnnwlhdbn0ug3" path="res://Assets/Sprites/Pickups/Crate.png" id="1_ndlpc"]
+[ext_resource type="Script" uid="uid://dqn180qafeua8" path="res://Scripts/PowerUps/health_effect.gd" id="2_5plbf"]
+[ext_resource type="Shader" uid="uid://dpuw4m11l5v5s" path="res://Assets/Shaders/entity_shader.gdshader" id="3_5plbf"]
+
+[sub_resource type="Resource" id="Resource_t6x1m"]
+script = ExtResource("2_5plbf")
+metadata/_custom_type_script = "uid://dqn180qafeua8"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_t6x1m"]
+resource_local_to_scene = true
+shader = ExtResource("3_5plbf")
+shader_parameter/columns = 1
+shader_parameter/rows = 1
+shader_parameter/frame = 0
+shader_parameter/fov = 45.0
+shader_parameter/cull_back = true
+shader_parameter/y_rot = 0.0
+shader_parameter/x_rot = 0.0
+shader_parameter/z_rot = 0.0
+shader_parameter/inset = 0.0
+shader_parameter/precision = 0.01
+shader_parameter/overlay_color = Color(1, 0, 0, 0)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_j51eb"]
+size = Vector2(12, 12)
+
+[node name="PowerUp" type="Area2D"]
+collision_layer = 32
+collision_mask = 0
+script = ExtResource("1_5mfs4")
+max_speed = 20.0
+speed_decel = 10.0
+max_distort_strength = 40.0
+min_distort_strength = 20.0
+distort_speed = 500.0
+effect = SubResource("Resource_t6x1m")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+material = SubResource("ShaderMaterial_t6x1m")
+scale = Vector2(0.3, 0.3)
+texture = ExtResource("1_ndlpc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_j51eb")

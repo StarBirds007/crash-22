@@ -192,7 +192,6 @@ func _handle_shader(delta: float) -> void:
 
 func _handle_water_trail() -> void:
 	if current_speed != target_speed:
-		print("Current Speed: ", current_speed, "\nTarget Speed: ", target_speed, "\n")
 		wave_line.set_shader_speed(current_speed)
 	
 	var trail_length: float = lerp(min_trail_length, max_trail_length, inverse_lerp(min_speed, boost_speed, current_speed))

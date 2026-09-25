@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b1pa0a5lwpawn"]
+[gd_scene format=3 uid="uid://b1pa0a5lwpawn"]
 
 [ext_resource type="PackedScene" uid="uid://5efh2rg36tbu" path="res://Scenes/Entities/Player/plane.tscn" id="1_0nejw"]
 [ext_resource type="Script" uid="uid://cpi2hmvd1cjpi" path="res://Scripts/game_world.gd" id="1_alii3"]
@@ -7,61 +7,69 @@
 [ext_resource type="Material" uid="uid://cqy0o5t1cr006" path="res://Assets/Shaders/water_shader.tres" id="5_p4c8d"]
 [ext_resource type="PackedScene" uid="uid://b5iublnyparqj" path="res://Scenes/Entities/Enemies/gun_boat.tscn" id="6_d0bjv"]
 [ext_resource type="PackedScene" uid="uid://dlw2ou0idt1ip" path="res://Scenes/Entities/Enemies/trail_plane.tscn" id="7_d0bjv"]
+[ext_resource type="Script" uid="uid://bqdm5b0slhm3g" path="res://Scenes/power_up_spawner.gd" id="8_27os8"]
+[ext_resource type="PackedScene" uid="uid://csc3jfx0sdalo" path="res://Scenes/PowerUp/power_up.tscn" id="9_rr1si"]
+[ext_resource type="Script" uid="uid://dwbclfqbur3s2" path="res://Scripts/PowerUps/power_up_effect.gd" id="9_xqdar"]
+[ext_resource type="Script" uid="uid://dqn180qafeua8" path="res://Scripts/PowerUps/health_effect.gd" id="10_xnm3i"]
 
-[node name="GameWorld" type="Node2D"]
+[sub_resource type="Resource" id="Resource_l855d"]
+script = ExtResource("10_xnm3i")
+metadata/_custom_type_script = "uid://dqn180qafeua8"
+
+[node name="GameWorld" type="Node2D" unique_id=2052254794]
 script = ExtResource("1_alii3")
+max_zoom = 0.7
 
-[node name="OceanParallax" type="Parallax2D" parent="."]
+[node name="OceanParallax" type="Parallax2D" parent="." unique_id=1387192233]
 z_index = -2
 scroll_offset = Vector2(240, 135)
 repeat_size = Vector2(480, 270)
 repeat_times = 5
 
-[node name="Sprite2D" type="Sprite2D" parent="OceanParallax"]
+[node name="Sprite2D" type="Sprite2D" parent="OceanParallax" unique_id=1708042387]
 material = ExtResource("5_p4c8d")
 position = Vector2(480, 270)
 texture = ExtResource("2_qvgq0")
 
-[node name="Plane" parent="." instance=ExtResource("1_0nejw")]
+[node name="Plane" parent="." unique_id=321112314 instance=ExtResource("1_0nejw")]
 position = Vector2(240, 135)
 
-[node name="Camera2D" type="Camera2D" parent="Plane"]
+[node name="Camera2D" type="Camera2D" parent="Plane" unique_id=44439118]
 physics_interpolation_mode = 1
 position_smoothing_speed = 10.0
 
-[node name="EnemySpawner" type="Node" parent="." node_paths=PackedStringArray("spawn_center_node")]
+[node name="EnemySpawner" type="Node" parent="." unique_id=1874413833 node_paths=PackedStringArray("spawn_center_node")]
 script = ExtResource("5_f1ejf")
 spawn_center_node = NodePath("../Plane")
 spawnable_objects = Array[PackedScene]([ExtResource("6_d0bjv"), ExtResource("7_d0bjv")])
-spawn_radius = 350.0
+spawn_radius = 500.0
 
-[node name="UI" type="CanvasLayer" parent="."]
+[node name="PowerUpSpawner" type="Node" parent="." unique_id=1329498371]
+script = ExtResource("8_27os8")
+power_up = ExtResource("9_rr1si")
+effects = Array[ExtResource("9_xqdar")]([SubResource("Resource_l855d")])
 
-[node name="Speed" type="Label" parent="UI"]
-unique_name_in_owner = true
-offset_right = 56.0
-offset_bottom = 23.0
-text = "Speed: "
+[node name="UI" type="CanvasLayer" parent="." unique_id=500888607]
 
-[node name="Radius" type="Label" parent="UI"]
-unique_name_in_owner = true
-offset_top = 98.0
-offset_right = 104.0
-offset_bottom = 147.0
-text = "Radius"
-
-[node name="KillCount" type="Label" parent="UI"]
+[node name="KillCount" type="Label" parent="UI" unique_id=1810530331]
 unique_name_in_owner = true
 offset_top = 120.0
 offset_right = 104.0
 offset_bottom = 169.0
 text = "Kill"
 
-[node name="Ocean" type="CanvasLayer" parent="."]
+[node name="HealthBar" type="ProgressBar" parent="UI" unique_id=1622379037]
+unique_name_in_owner = true
+offset_left = 18.0
+offset_top = 15.0
+offset_right = 212.0
+offset_bottom = 42.0
+
+[node name="Ocean" type="CanvasLayer" parent="." unique_id=1033263426]
 layer = -1
 visible = false
 
-[node name="TextureRect" type="TextureRect" parent="Ocean"]
+[node name="TextureRect" type="TextureRect" parent="Ocean" unique_id=1747584170]
 material = ExtResource("5_p4c8d")
 anchors_preset = 15
 anchor_right = 1.0

@@ -6,11 +6,19 @@ var target: Node2D
 @export var circle_radius: float = 100
 @export var attack_radius: float = 225
 
+@export var mouse_mode: bool = false # For Debugging
+
 var is_on_target: bool = false
 var is_within_radius: bool = false
 
+
+func _ready() -> void:
+	if mouse_mode:
+		push_warning("Mouse Mode is on for: " + get_parent().name + ". Turn off if unintended!")
+
+
 func get_target() -> Vector2:
-	var circle_center = target.global_position
+	var circle_center = target.global_position if not mouse_mode else get_global_mouse_position()
 	var line_dir = Vector2.RIGHT.rotated(rotation)
 	var line_point = global_position
 
@@ -39,7 +47,7 @@ func get_target() -> Vector2:
 
 
 func get_exact_target() -> Vector2:
-	return target.global_position
+	return target.global_position if not mouse_mode else get_global_mouse_position()
 
 
 func set_target(input_target: Node2D) -> void:

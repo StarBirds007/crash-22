@@ -3,4 +3,5 @@
 [ext_resource type="Script" uid="uid://bdhp377h1pttn" path="res://Scripts/hurt_component.gd" id="1_jkh4p"]
 
 [node name="HurtComponent" type="Area2D"]
+monitoring = false
 script = ExtResource("1_jkh4p")

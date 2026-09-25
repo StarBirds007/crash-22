@@ -1,4 +1,5 @@
 extends Line2D
+class_name WaveLine
 
 @export var node_to_follow: Node2D
 

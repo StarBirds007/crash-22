@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://5efh2rg36tbu"]
+[gd_scene load_steps=28 format=3 uid="uid://5efh2rg36tbu"]
 
 [ext_resource type="Script" uid="uid://cuflt55xwh14p" path="res://Scripts/plane.gd" id="1_ly0hq"]
 [ext_resource type="PackedScene" uid="uid://diknxdj5ctuy2" path="res://Scenes/Effects & Common Scenes/plane_trail.tscn" id="2_r05hn"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://uukkdcuko0uo" path="res://Scenes/Composition/bullet_manager.tscn" id="5_r05hn"]
 [ext_resource type="PackedScene" uid="uid://fsfege5gyhfg" path="res://Scenes/Composition/body_collision_component.tscn" id="7_b3b3x"]
 [ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="8_7yaso"]
+[ext_resource type="PackedScene" uid="uid://cprfc0sdttuny" path="res://Scenes/Effects & Common Scenes/power_up_component.tscn" id="8_b3b3x"]
 [ext_resource type="PackedScene" uid="uid://captkha1e40tl" path="res://Scenes/Composition/hurt_component.tscn" id="9_m4yj6"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_oi6fs"]
@@ -124,14 +125,16 @@ resource_local_to_scene = true
 mesh = SubResource("QuadMesh_p4c8d")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6ebbn"]
-size = Vector2(12, 10)
+size = Vector2(16, 10)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b3b3x"]
-size = Vector2(26, 24)
+size = Vector2(16, 16)
 
 [node name="Plane" type="CharacterBody2D"]
 collision_mask = 0
 script = ExtResource("1_ly0hq")
+turn_rate_at_min_speed = 4.0
+turn_rate_at_max_speed = 2.0
 
 [node name="PlaneTrail" parent="." node_paths=PackedStringArray("node_to_follow") instance=ExtResource("2_r05hn")]
 points = PackedVector2Array(6, 0, -100, 0)
@@ -141,7 +144,7 @@ offset = Vector2(7, 0)
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 material = SubResource("ShaderMaterial_oi6fs")
 rotation = 1.5707964
-scale = Vector2(0.5, 0.5)
+scale = Vector2(0.75, 0.75)
 sprite_frames = SubResource("SpriteFrames_5g3pq")
 autoplay = "default"
 
@@ -159,13 +162,18 @@ gizmo_extents = 1.0
 position = Vector2(1, 0)
 multimesh = SubResource("MultiMesh_r05hn")
 
-[node name="BodyCollisionComponent" parent="." instance=ExtResource("7_b3b3x")]
+[node name="BodyCollisionComponent" parent="." node_paths=PackedStringArray("health_component") instance=ExtResource("7_b3b3x")]
 collision_mask = 4
+health_component = NodePath("../HealthComponent")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BodyCollisionComponent"]
 shape = SubResource("RectangleShape2D_6ebbn")
 
 [node name="HealthComponent" parent="." instance=ExtResource("8_7yaso")]
+
+[node name="PowerUpComponent" parent="." node_paths=PackedStringArray("target_node") instance=ExtResource("8_b3b3x")]
+pickup_radius = 20.0
+target_node = NodePath("..")
 
 [node name="HurtComponent" parent="." node_paths=PackedStringArray("visual_component", "health_component") instance=ExtResource("9_m4yj6")]
 collision_mask = 4

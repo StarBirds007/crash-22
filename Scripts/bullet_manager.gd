@@ -1,4 +1,5 @@
 extends MultiMeshInstance2D
+class_name BulletManager
 
 # Structure to hold each bullet's raw data
 class Bullet:
@@ -9,6 +10,8 @@ class Bullet:
 	var rotation: float = 0.0
 
 @export_flags_2d_physics var collision_mask: int = 2
+
+@export var disabled: bool = false
 
 var active_bullets: Array[Bullet] = []
 
@@ -59,6 +62,8 @@ func update_multimesh() -> void:
 
 # Function to spawn a bullet from your gun
 func spawn_bullet(start_pos: Vector2, direction: Vector2, speed: float) -> void:
+	if disabled:
+		return
 	var new_bullet = Bullet.new()
 	new_bullet.starting_position = start_pos
 	new_bullet.position = start_pos

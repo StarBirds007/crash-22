@@ -1,4 +1,4 @@
-[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://nux7ym07ffan"]
+[gd_resource type="ShaderMaterial" format=3 uid="uid://nux7ym07ffan"]
 
 [ext_resource type="Shader" uid="uid://rjmca8p5pxfc" path="res://Assets/Shaders/plane_trail_shader.gdshader" id="1_r4aty"]
 

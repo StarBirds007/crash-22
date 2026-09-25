@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://b5iublnyparqj"]
+[gd_scene load_steps=26 format=3 uid="uid://b5iublnyparqj"]
 
 [ext_resource type="Texture2D" uid="uid://cqhpvkfab0o1h" path="res://Assets/Sprites/Enemies/GunBoat.png" id="1_55ndt"]
 [ext_resource type="Material" uid="uid://dcdmfex6f48tx" path="res://Assets/Shaders/enemy_shader_material.tres" id="1_lxsrv"]
@@ -10,15 +10,18 @@
 [ext_resource type="Texture2D" uid="uid://dqmgcwk6xduex" path="res://Assets/Sprites/Palettes/BluePalette.png" id="4_etaqx"]
 [ext_resource type="PackedScene" uid="uid://d23fdvk20urre" path="res://Scenes/Composition/health_component.tscn" id="6_nj4pn"]
 [ext_resource type="PackedScene" uid="uid://uukkdcuko0uo" path="res://Scenes/Composition/bullet_manager.tscn" id="6_r0chn"]
+[ext_resource type="PackedScene" uid="uid://7npcoxlxg1sw" path="res://Scenes/Effects & Common Scenes/explosion.tscn" id="7_jw5f0"]
 [ext_resource type="PackedScene" uid="uid://captkha1e40tl" path="res://Scenes/Composition/hurt_component.tscn" id="7_r0chn"]
 [ext_resource type="PackedScene" uid="uid://bxxsagdyddcfn" path="res://Scenes/Effects & Common Scenes/boat_trail.tscn" id="9_r0chn"]
 [ext_resource type="PackedScene" uid="uid://gg8wbcyf2i46" path="res://Scenes/Composition/targeting_component.tscn" id="10_8koeu"]
 [ext_resource type="Shader" uid="uid://urufs6nnwh8a" path="res://Assets/Shaders/boat_trail_shader.gdshader" id="10_vl83h"]
+[ext_resource type="PackedScene" uid="uid://domlxh5ejvyw5" path="res://Scenes/Composition/death_component.tscn" id="13_etaqx"]
 
 [sub_resource type="Resource" id="Resource_etaqx"]
 resource_local_to_scene = true
 script = ExtResource("2_jw5f0")
-no_of_instances = 10
+no_of_instances = 4
+pwup_drop_chance = 0.15
 metadata/_custom_type_script = "uid://dxllopgjijarg"
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_lxsrv"]
@@ -105,6 +108,12 @@ collision_mask = 1
 [node name="TargetingComponent" parent="." instance=ExtResource("10_8koeu")]
 
 [node name="HealthComponent" parent="." instance=ExtResource("6_nj4pn")]
+
+[node name="DeathComponent" parent="." node_paths=PackedStringArray("bullet_manager", "hurt_component", "visual_components") instance=ExtResource("13_etaqx")]
+bullet_manager = NodePath("../BulletManager")
+hurt_component = NodePath("../HurtComponent")
+visual_components = [NodePath("../GunSprite"), NodePath("../Sprite2D"), NodePath("../WaveLine")]
+effect = ExtResource("7_jw5f0")
 
 [node name="HurtComponent" parent="." node_paths=PackedStringArray("visual_component", "health_component") instance=ExtResource("7_r0chn")]
 collision_layer = 2

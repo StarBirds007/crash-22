@@ -3,15 +3,28 @@ extends Node
 @export var spawn_center_node: Node2D
 @export var spawnable_objects: Array[PackedScene] = []
 @export var spawn_radius: float = 600.0
+@export var active_radius: float = 1500.0
 
-var alive_counts: Dictionary = {} 
+var active_radius_squared: float
+
+var alive_counts: Dictionary = {}
+var instances: Dictionary[PackedScene, Array]
 var scene_caps: Dictionary = {}
 
 var dead_enemies: int = 0
 
+signal body_freed(global_position: Vector2)
+
 
 func _ready() -> void:
 	_build_scene_caps()
+	_build_instances()
+	active_radius_squared = active_radius * active_radius
+
+
+func _build_instances():
+	for scene in spawnable_objects:
+		instances[scene] = []
 
 
 func _build_scene_caps() -> void:
@@ -29,6 +42,19 @@ func _build_scene_caps() -> void:
 		alive_counts[scene] = 0
 		temp.free()
 
+
+func _process(_delta: float) -> void:
+	var enemies_to_remove: Array[Array]
+	for scene in instances:
+		for entity in instances[scene]:
+			if is_instance_valid(entity) and (entity is Node2D):
+				if entity.global_position.distance_squared_to(spawn_center_node.global_position) > active_radius_squared:
+					enemies_to_remove.append([scene, entity])
+
+	for arr in enemies_to_remove:
+		_count_entity_death(arr[0], arr[1], false)
+		arr[1].queue_free()
+				
 
 func _is_scene_available(scene: PackedScene) -> bool:
 	var cap: int = scene_caps.get(scene, -1)
@@ -65,18 +91,29 @@ func spawn_random_enemy() -> Node:
 	
 	if instance is Node2D:
 		instance.global_position = spawn_position
+		instance.look_at(spawn_center_node.global_position)
 	
 	if "resource" in instance:
 		instance.resource.target = spawn_center_node
-		instance.resource.died.connect(func():
-			dead_enemies += 1
-			alive_counts[random_scene] = max(alive_counts.get(random_scene, 0) - 1, 0))
+		instance.resource.died.connect(_count_entity_death.bind(random_scene, instance))
+
+	var death_component: DeathComponent = ComponentUtility.get_component(instance, DeathComponent)
+	death_component.body_freed.connect(func(position: Vector2): body_freed.emit(position))
 
 	alive_counts[random_scene] = alive_counts.get(random_scene, 0) + 1
+	instances[random_scene].append(instance)
 
 	add_child(instance)
 
 	return instance
+
+
+func _count_entity_death(scene: PackedScene, instance: Node, player_killed: bool = true) -> void:
+	if player_killed:
+		dead_enemies += 1
+	instances[scene].erase(instance)
+	alive_counts[scene] = max(alive_counts.get(scene, 0) - 1, 0)
+	
 
 
 func spawn_up_to_capacity() -> void:
@@ -87,27 +124,3 @@ func spawn_up_to_capacity() -> void:
 		if spawned == null:
 			break
 		attempts += 1
-
-
-# func has_resource_type(object: Object, resource_type: Script) -> bool:
-# 	for property in object.get_property_list():
-# 		var prop_name = property.name
-# 		var prop_value = object.get(prop_name)
-		
-# 		# Check if the value is a Resource and matches the target type/script
-# 		if prop_value is Resource and is_instance_of(prop_value, resource_type):
-# 			return true
-			
-# 	return false
-
-
-# func get_resource_name(object: Object, resource_type: Script) -> String:
-# 	for property in object.get_property_list():
-# 		var prop_name = property.name
-# 		var prop_value = object.get(prop_name)
-		
-# 		# Check if the value is a Resource and matches the target type/script
-# 		if prop_value is Resource and is_instance_of(prop_value, resource_type):
-# 			return prop_name
-			
-# 	return ""f
